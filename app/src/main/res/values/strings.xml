@@ -1,0 +1,12 @@
+<resources>
+    <integer name="font_size">20</integer>
+    <string name="app_name">Simple Notes App</string>
+    <string name="notas_guardadas">Saved Notes:</string>
+    <string name="guardar">Save</string>
+    <string name="nota_guardada">Nota Guardada</string>
+    <string name="sugerencia">Write a note here!</string>
+    <string name="cero">0</string>
+    <string name="lista_vacia">Empty List</string>
+    <string name="limpiar">Clear</string>
+    <string name="scroll">Scroll for more notes</string>
+</resources>
