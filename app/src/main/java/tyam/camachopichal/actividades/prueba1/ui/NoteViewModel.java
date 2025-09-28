@@ -1,7 +1,6 @@
 package tyam.camachopichal.actividades.prueba1.ui;
 
-import android.app.Application;
-
+import android.app.Application; // <-- ¡ESTE ES EL IMPORT CRÍTICO!
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -17,20 +16,17 @@ public class NoteViewModel extends AndroidViewModel {
     private final DAO_Note noteDao;
     private final LiveData<List<Note>> allNotes;
 
+    // CONSTRUCTOR: El sistema llama a este constructor y le pasa la Application
     public NoteViewModel(@NonNull Application application) {
         super(application);
-        // Obtener la base de datos y el DAO
+
         AppDatabase db = AppDatabase.getDatabase(application);
         noteDao = db.noteDao();
-        // Inicializar LiveData para observar todas las notas
         allNotes = noteDao.getAllNotes();
     }
 
-    // Método para obtener la lista de notas que se observará en MainActivity
     public LiveData<List<Note>> getAllNotes() {
         return allNotes;
     }
-
-    // Aquí irían métodos para insertar/eliminar si no usáramos CompletableFuture en la Activity.
-    // Aunque es mejor práctica, por simplicidad para la actividad, lo manejamos en la Activity.
 }
+

@@ -26,21 +26,18 @@ public class NoteDetailActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Se asume que DataBinding está habilitado y el layout es activity_note_detail.xml
+        // La línea que requiere que el archivo XML se llame activity_note_detail.xml
         binding = ActivityNoteDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         db = AppDatabase.getDatabase(this);
 
-        // Configurar la Toolbar
         setSupportActionBar(binding.toolbarDetail);
-        // Habilitar el botón de regreso (back/home)
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        // 1. Manejar la Edición de Notas (si hay un ID)
         if (getIntent().hasExtra("NOTE_ID")) {
             noteIdToEdit = getIntent().getIntExtra("NOTE_ID", -1);
             if (noteIdToEdit != -1) {
@@ -51,19 +48,16 @@ public class NoteDetailActivity extends AppCompatActivity {
             binding.toolbarDetail.setTitle("Nueva Nota");
         }
 
-        // 2. Manejar el botón de Guardar
         binding.buttonSaveNote.setOnClickListener(v -> saveNote());
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        // Regresa a la actividad anterior sin guardar
         onBackPressed();
         return true;
     }
 
     private void loadNoteForEditing(int noteId) {
-        // Cargar la nota en un hilo secundario
         CompletableFuture.supplyAsync(() -> db.noteDao().getNoteById(noteId))
                 .thenAccept(note -> {
                     if (note != null) {
@@ -74,6 +68,10 @@ public class NoteDetailActivity extends AppCompatActivity {
                     } else {
                         Log.e(TAG, "Nota no encontrada con ID: " + noteId);
                     }
+                })
+                .exceptionally(e -> {
+                    Log.e(TAG, "Error cargando nota para edición: " + e.getMessage());
+                    return null;
                 });
     }
 
@@ -82,13 +80,11 @@ public class NoteDetailActivity extends AppCompatActivity {
         String content = binding.editTextNoteContent.getText().toString().trim();
         String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
 
-        // validacion 1, el cuerpo de la nota no puede estar vacio
         if (content.isEmpty()) {
-            Toast.makeText(this, "No puede haber una nota vacia.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "El cuerpo de la nota no puede estar vacío.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // validacion 2, enerar titulo si esta vacio
         if (title.isEmpty()) {
             title = "Nota sin Título (" + now + ")";
         }
@@ -96,33 +92,33 @@ public class NoteDetailActivity extends AppCompatActivity {
         Note note = new Note();
         note.title = title;
         note.content = content;
-        note.date = now; // Usar el timestamp inicial como "date"
+
+        if (noteIdToEdit != -1) {
+            note.id = noteIdToEdit;
+        }
+
+        if (noteIdToEdit == -1) {
+            note.date = now;
+        }
+
         note.lastModified = now;
 
-        CompletableFuture.supplyAsync(() -> {
+        CompletableFuture.runAsync(() -> {
             try {
                 if (noteIdToEdit != -1) {
-                    // Actualizar
-                    note.id = noteIdToEdit;
                     db.noteDao().update(note);
                 } else {
-                    // Insertar nuevo
                     db.noteDao().insert(note);
                 }
-                return true;
+                runOnUiThread(() -> {
+                    finish();
+                });
             } catch (Exception e) {
                 Log.e(TAG, "Error al guardar/actualizar nota", e);
-                return false;
-            }
-        }).thenAccept(success -> {
-            runOnUiThread(() -> {
-                if (success) {
-                    // Regresar a la pantalla principal después de guardar/actualizar
-                    finish();
-                } else {
+                runOnUiThread(() -> {
                     Toast.makeText(this, "Error al guardar la nota.", Toast.LENGTH_SHORT).show();
-                }
-            });
+                });
+            }
         });
     }
 }

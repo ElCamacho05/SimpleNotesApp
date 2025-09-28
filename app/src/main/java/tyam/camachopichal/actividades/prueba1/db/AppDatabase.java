@@ -20,7 +20,8 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "simple_notes_db")
-                            .fallbackToDestructiveMigration() // CORRECCIÓN CRÍTICA DE MIGRACIÓN
+                            .fallbackToDestructiveMigration()
+                            .allowMainThreadQueries() // <-- AÑADIDO: Permite la inicialización en el hilo principal.
                             .build();
                 }
             }

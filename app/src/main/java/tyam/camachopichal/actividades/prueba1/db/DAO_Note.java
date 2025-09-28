@@ -11,12 +11,12 @@ import androidx.room.Update;
 import java.util.List;
 
 @Dao
-
 public interface DAO_Note {
 
     @Query("SELECT * FROM notes ORDER BY lastModified DESC")
     LiveData<List<Note>> getAllNotes();
 
+    // Sincrónico: Ejecutado en hilo secundario por CompletableFuture
     @Query("SELECT * FROM notes WHERE id = :noteId")
     Note getNoteById(int noteId);
 

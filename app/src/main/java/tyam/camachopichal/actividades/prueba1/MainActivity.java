@@ -21,6 +21,7 @@ import tyam.camachopichal.actividades.prueba1.databinding.ActivityMainBinding;
 import tyam.camachopichal.actividades.prueba1.db.AppDatabase;
 import tyam.camachopichal.actividades.prueba1.db.Note;
 import tyam.camachopichal.actividades.prueba1.ui.NoteViewModel;
+import tyam.camachopichal.actividades.prueba1.ui.NoteViewModelFactory;
 import tyam.camachopichal.actividades.prueba1.ui.NoteAdapter;
 
 public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteItemListener {
@@ -42,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         setSupportActionBar(binding.toolbarMain);
 
         // configuracio del view model
-        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
+        NoteViewModelFactory factory = new NoteViewModelFactory(getApplication());
+        noteViewModel = new ViewModelProvider(this, factory).get(NoteViewModel.class);
 
         // 3. Configurar RecyclerView
         setupRecyclerView();
