@@ -1,82 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/white"
+    tools:context=".MainActivity">
 
+    <!-- 1. Toolbar: Cabecera con título y menú de acciones (Agregar/Eliminar) -->
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/design_default_color_primary"/>
+        android:id="@+id/toolbar_main"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/design_default_color_primary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:title="@string/app_name_title" />
 
+    <!-- 2. RecyclerView: Contenedor para la lista de notas -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_notes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingTop="8dp"
+        android:clipToPadding="false"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_main"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_note" />
+
+    <!-- 3. Floating Action Button (FAB): Botón principal para "Agregar Nota" -->
+    <!-- Elegimos un FAB porque ofrece la mejor experiencia de usuario para la acción principal -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_note"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="@string/agregar_nota"
+        android:src="@drawable/ic_add"
+        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 4. Texto de lista vacía (Visible solo si no hay notas) -->
     <TextView
-        android:id="@+id/textView_Notas"
+        android:id="@+id/text_view_empty_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:layout_alignParentStart="true"
-        android:layout_margin="@dimen/default_margin"
-        android:layout_marginStart="@dimen/default_margin"
-        android:text="@string/notas_guardadas"
-        android:textSize="@dimen/font_size"
-        android:textColor="@color/black"/>
+        android:text="@string/lista_vacia_sugerencia"
+        android:textColor="@color/design_default_color_secondary"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/recycler_view_notes"
+        app:layout_constraintBottom_toBottomOf="@id/recycler_view_notes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:drawableTopCompat="@drawable/ic_empty_notes"
+        android:drawablePadding="8dp" />
 
-    <TextView
-        android:id="@+id/textView_CantNotas"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/toolbar"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/default_margin"
-        android:layout_toEndOf="@id/textView_Notas"
-        android:textSize="@dimen/font_size"
-        android:text="@string/cero"/>
-
-    <Button
-        android:id="@+id/button_Guardar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_margin="@dimen/default_margin"
-        android:text="@string/guardar"
-        android:textSize="@dimen/font_size" />
-
-    <Button
-        android:id="@+id/button_Limpiar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/default_margin"
-        android:text="@string/limpiar"
-        android:textSize="@dimen/font_size" />
-
-    <EditText
-        android:id="@+id/editText_Nota"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView_Notas"
-        android:inputType="text"
-        android:layout_margin="@dimen/default_margin"
-        android:hint="@string/sugerencia"/>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText_Nota"
-        android:layout_margin="@dimen/default_margin"
-        android:layout_above="@+id/button_Guardar">
-
-        <TextView
-            android:id="@+id/textView_ListadoNotas"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            android:textSize="@dimen/font_size"
-            android:text="@string/lista_vacia" />
-    </ScrollView>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

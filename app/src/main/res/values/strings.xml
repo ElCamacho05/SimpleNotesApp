@@ -9,4 +9,10 @@
     <string name="lista_vacia">Empty List</string>
     <string name="limpiar">Clear</string>
     <string name="scroll">Scroll for more notes</string>
+    <string name="app_name_title">SimpleNotes App</string>
+    <string name="agregar_nota">Agregar Nota</string>
+    <string name="lista_vacia_sugerencia">Lista vacia.\nAgregue Notas con el Boton +</string>
+    <string name="guardar_nota">Guardar nota</string>
+    <string name="cuerpo_nota_hint">Escriba aqui su nota!!!</string>
+    <string name="titulo_nota_hint">Escriba aqui el titulo de su nota</string>
 </resources>

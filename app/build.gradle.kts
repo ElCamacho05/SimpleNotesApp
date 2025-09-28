@@ -32,6 +32,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
     kotlinOptions {
         jvmTarget = "11"
@@ -43,7 +44,10 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.core.ktx)
+    implementation(libs.room.common.jvm)
+    implementation(libs.room.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    annotationProcessor(libs.room.compiler)
 }
