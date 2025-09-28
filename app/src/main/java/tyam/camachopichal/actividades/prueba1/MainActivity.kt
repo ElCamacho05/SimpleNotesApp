@@ -24,9 +24,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
+        // Cargar notas guardadas de SharedPreferences al iniciar
         loadPreferences()
         updateUI()
 
+        // Botón Guardar
         binding.buttonGuardar.setOnClickListener {
             val nota = binding.editTextNota.text.toString()
             if (nota.isNotBlank()) {
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Botón Limpiar
         binding.buttonLimpiar.setOnClickListener {
             viewModel.limpiarNotas()
             updateUI()
@@ -44,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
+        // keep notes on SharedPreferences when activiry is paused
         saveOnSharedPreferences()
     }
 
