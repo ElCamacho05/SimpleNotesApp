@@ -46,21 +46,17 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         NoteViewModelFactory factory = new NoteViewModelFactory(getApplication());
         noteViewModel = new ViewModelProvider(this, factory).get(NoteViewModel.class);
 
-        // 3. Configurar RecyclerView
         setupRecyclerView();
 
-        // Observar cambios en la lista de notas de la BD (Room + LiveData)
         noteViewModel.getAllNotes().observe(this, notes -> {
             noteAdapter.submitList(notes);
             updateEmptyState(notes);
         });
 
-        // 4. Configurar el FAB (Agregar Nota)
         binding.fabAddNote.setOnClickListener(v -> {
             if (!isSelectionMode) {
-                openNoteDetailActivity(null); // Abre la actividad para una nota nueva
+                openNoteDetailActivity(null);
             } else {
-                // Si está en modo selección, el FAB puede tener otra acción o simplemente ignorarse
                 Toast.makeText(this, "Termina la eliminación primero.", Toast.LENGTH_SHORT).show();
             }
         });
@@ -81,11 +77,9 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         }
     }
 
-    // --- Lógica del Menú (Toolbar) ---
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflar el menú que contendrá la acción de "Eliminar"
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -99,9 +93,7 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         return super.onOptionsItemSelected(item);
     }
 
-    // --- Implementación de NoteItemListener ---
 
-    // Maneja el DOBLE CLIC (para Editar)
     @Override
     public void onNoteDoubleClick(Note note) {
         if (!isSelectionMode) {
@@ -109,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         }
     }
 
-    // Maneja el CLICK NORMAL (para la Selección/Eliminación)
     @Override
     public void onNoteClick(Note note, boolean isChecked) {
         if (isSelectionMode) {
@@ -121,22 +112,17 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         }
     }
 
-    // Maneja el LONG CLICK (para entrar en Modo Selección)
     @Override
     public void onNoteLongClick(Note note) {
         if (!isSelectionMode) {
             enterSelectionMode();
-            // Asegurarse de que el elemento que recibió el long click quede seleccionado
             selectedNotes.add(note);
         }
     }
 
-    // --- Flujos de Navegación y Acciones ---
-
     private void openNoteDetailActivity(Note note) {
         Intent intent = new Intent(this, NoteDetailActivity.class);
         if (note != null) {
-            // Pasar ID si es para editar
             intent.putExtra("NOTE_ID", note.id);
         }
         startActivity(intent);
@@ -146,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         isSelectionMode = true;
         selectedNotes.clear();
         noteAdapter.setSelectionMode(true);
-        // Actualizar el UI, por ejemplo, cambiando el título de la toolbar
         getSupportActionBar().setTitle("0 Notas Seleccionadas");
     }
 
@@ -159,12 +144,10 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
 
     private void handleDeleteAction() {
         if (!isSelectionMode || selectedNotes.isEmpty()) {
-            // Requisito: Si no hay selección, no hacer nada.
             Toast.makeText(this, "Selecciona una o más notas para eliminar.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Requisito: Preguntar al usuario si está seguro (usando Snackbar)
         Snackbar.make(binding.getRoot(),
                         "¿Estás seguro de eliminar " + selectedNotes.size() + " nota(s)?",
                         Snackbar.LENGTH_LONG)
@@ -173,13 +156,11 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
     }
 
     private void confirmDeletion() {
-        // Ejecutar la eliminación en un hilo secundario
         CompletableFuture.runAsync(() -> {
             for (Note note : selectedNotes) {
                 AppDatabase.getDatabase(this).noteDao().delete(note);
             }
         }).thenRun(() -> {
-            // Requisito: Actualizar la lista (LiveData lo hace automáticamente), pero salir del modo selección.
             runOnUiThread(() -> {
                 Toast.makeText(this, "Nota(s) eliminada(s).", Toast.LENGTH_SHORT).show();
                 exitSelectionMode();

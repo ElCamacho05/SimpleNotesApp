@@ -26,7 +26,6 @@ public class NoteDetailActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // La línea que requiere que el archivo XML se llame activity_note_detail.xml
         binding = ActivityNoteDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
