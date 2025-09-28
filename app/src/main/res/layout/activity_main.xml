@@ -8,7 +8,6 @@
     android:background="@color/white"
     tools:context=".MainActivity">
 
-    <!-- 1. Toolbar: Cabecera con título y menú de acciones (Agregar/Eliminar) -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_main"
         android:layout_width="0dp"
@@ -20,7 +19,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:title="@string/app_name_title" />
 
-    <!-- 2. RecyclerView: Contenedor para la lista de notas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_notes"
         android:layout_width="0dp"
@@ -34,8 +32,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_note" />
 
-    <!-- 3. Floating Action Button (FAB): Botón principal para "Agregar Nota" -->
-    <!-- Elegimos un FAB porque ofrece la mejor experiencia de usuario para la acción principal -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_note"
         android:layout_width="wrap_content"
@@ -48,7 +44,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 4. Texto de lista vacía (Visible solo si no hay notas) -->
     <TextView
         android:id="@+id/text_view_empty_state"
         android:layout_width="wrap_content"
