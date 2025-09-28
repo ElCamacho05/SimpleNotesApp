@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Ítem de menú para la acción de Eliminar -->
+    <item
+        android:id="@+id/action_delete_notes"
+        android:icon="@drawable/ic_delete"
+        android:title="Eliminar Notas"
+        app:showAsAction="ifRoom" />
+</menu>
