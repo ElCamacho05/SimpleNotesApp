@@ -14,6 +14,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +46,26 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbarMain);
+
+        // FUNCIÓN PARA MANEJAR EL BOTÓN DE RETROCESO
+        OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                // Aquí va la misma lógica que tenías antes
+                if (isSelectionMode) {
+                    exitSelectionMode();
+                } else {
+                    // Si no estamos en modo selección, este callback debe deshabilitarse
+                    // para permitir que la actividad se cierre de forma normal.
+                    setEnabled(false); // Desactiva este callback
+                    // Vuelve a llamar al dispatcher para que ejecute el siguiente callback
+                    // o el comportamiento por defecto (cerrar la app).
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        };
+        dispatcher.addCallback(this, callback);
 
         // configuracio del view model
         NoteViewModelFactory factory = new NoteViewModelFactory(getApplication());
@@ -111,15 +134,20 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         }
     }
 
+
     // Maneja el CLICK NORMAL (para la Selección/Eliminación)
     @Override
     public void onNoteClick(Note note, boolean isChecked) {
         if (isSelectionMode) {
             if (isChecked) {
-                selectedNotes.add(note);
+                if (!selectedNotes.contains(note)) { // Evita duplicados
+                    selectedNotes.add(note);
+                }
             } else {
                 selectedNotes.remove(note);
             }
+            // ¡CORRECCIÓN! Se actualiza el título cada vez que se hace clic
+            updateSelectionTitle();
         }
     }
 
@@ -130,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
             enterSelectionMode();
             // Asegurarse de que el elemento que recibió el long click quede seleccionado
             selectedNotes.add(note);
+            // ¡CORRECCIÓN! Se actualiza el título justo después de la primera selección
+            updateSelectionTitle();
         }
     }
 
@@ -144,11 +174,12 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         startActivity(intent);
     }
 
+    // REEMPLAZA tu método con este
     private void enterSelectionMode() {
         isSelectionMode = true;
         selectedNotes.clear();
         noteAdapter.setSelectionMode(true);
-        updateSelectionTitle(); // Muestra el título inicial
+        updateSelectionTitle();
     }
 
     private void exitSelectionMode() {
@@ -159,32 +190,15 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
     }
 
     // FUNCIÓN PARA ACTUALIZAR EL TÍTULO DEL CONTADOR
+    // Pega esta nueva función en MainActivity.java
     private void updateSelectionTitle() {
         int count = selectedNotes.size();
         if (count == 0) {
             getSupportActionBar().setTitle("Seleccionar notas");
         } else {
+            // Esta es una forma sencilla de mostrar el contador
             getSupportActionBar().setTitle(count + " nota(s) seleccionada(s)");
         }
-    }
-
-    // FUNCIÓN PARA MANEJAR EL BOTÓN DE RETROCESO
-    private void setupOnBackPressed() {
-        OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                // Si estamos en modo de selección, lo cancelamos
-                if (isSelectionMode) {
-                    exitSelectionMode();
-                } else {
-                    // Si no, permitimos el comportamiento normal (cerrar la app)
-                    setEnabled(false); // Desactiva este callback
-                    getOnBackPressedDispatcher().onBackPressed();
-                }
-            }
-        };
-        dispatcher.addCallback(this, callback);
     }
 
 
