@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.snackbar.Snackbar;
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,8 +148,7 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         isSelectionMode = true;
         selectedNotes.clear();
         noteAdapter.setSelectionMode(true);
-        // Actualizar el UI, por ejemplo, cambiando el título de la toolbar
-        getSupportActionBar().setTitle("0 Notas Seleccionadas");
+        updateSelectionTitle(); // Muestra el título inicial
     }
 
     private void exitSelectionMode() {
@@ -156,6 +157,36 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.NoteI
         noteAdapter.setSelectionMode(false);
         getSupportActionBar().setTitle(R.string.app_name_title);
     }
+
+    // FUNCIÓN PARA ACTUALIZAR EL TÍTULO DEL CONTADOR
+    private void updateSelectionTitle() {
+        int count = selectedNotes.size();
+        if (count == 0) {
+            getSupportActionBar().setTitle("Seleccionar notas");
+        } else {
+            getSupportActionBar().setTitle(count + " nota(s) seleccionada(s)");
+        }
+    }
+
+    // FUNCIÓN PARA MANEJAR EL BOTÓN DE RETROCESO
+    private void setupOnBackPressed() {
+        OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Si estamos en modo de selección, lo cancelamos
+                if (isSelectionMode) {
+                    exitSelectionMode();
+                } else {
+                    // Si no, permitimos el comportamiento normal (cerrar la app)
+                    setEnabled(false); // Desactiva este callback
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        };
+        dispatcher.addCallback(this, callback);
+    }
+
 
     private void handleDeleteAction() {
         if (!isSelectionMode || selectedNotes.isEmpty()) {
